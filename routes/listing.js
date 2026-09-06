@@ -27,6 +27,7 @@ router.post("/", (req, res) => {
         location: location
     }).save()
     console.log(NewListing);
+    req.flash("success", "new listing created..!");
     res.redirect("/listings")
 })
 
