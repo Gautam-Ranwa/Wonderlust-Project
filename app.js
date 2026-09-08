@@ -6,19 +6,9 @@ const port = 8080;
 
 import mongoose from "mongoose";
 
-import Review from "./models/review.js";
-import listings from "./routes/listing.js"
+
 import flash from "connect-flash";
 
-main().then(() => {
-    console.log(`connection successful`);
-}).catch((err) => {
-    console.log("connection error");
-})
-
-async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
-}
 
 import path from "path"
 import { fileURLToPath } from "url";
@@ -26,6 +16,9 @@ import methodOverride from "method-override"
 import Listing from "./models/listing.js";
 import ejsMate from "ejs-mate";
 import reviews from "./routes/review.js"
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import User from "./models/user.js";
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -39,6 +32,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 app.engine('ejs', ejsMate);
+
+import ReviewRouter from "./models/review.js";
+import listingsRouter from "./routes/listing.js";
+import UserRouter from "./routes/user.js";
+
+main().then(() => {
+    console.log(`connection successful`);
+}).catch((err) => {
+    console.log("connection error");
+})
+
+async function main() {
+    await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+}
 
 
 const sessionOptions = {
@@ -59,14 +66,32 @@ app.get("/", (req, res) => {
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
-    console.log(res.locals.success);
+    res.locals.error = req.flash("error");
     next();
-})
+});
 
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
+// app.get("/demoUser", async (req, res) => {
+//     let fakeUser = new User({
+//         email: "student@gmail.com",
+//         username: "delta-student",
+//     });
+//     let registeredUser = await User.register(fakeUser, "helloWorld");
+//     res.send(registeredUser);
+// })
+
+app.use("/listings", listingsRouter);
+app.use("/listings/:id/reviews", ReviewRouter);
+app.use("/", UserRouter);
 
 
 // app.get("/testListing", async (req, res) => {

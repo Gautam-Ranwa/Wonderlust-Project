@@ -16,20 +16,23 @@ router.get("/new", (req, res) => {
     res.render("./listings/new");
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     let { title, description, image, price, country, location } = req.body;
+
     let NewListing = new Listing({
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        country: country,
-        location: location
-    }).save()
-    console.log(NewListing);
+        title,
+        description,
+        image,
+        price,
+        country,
+        location
+    });
+
+    await NewListing.save();
+
     req.flash("success", "new listing created..!");
-    res.redirect("/listings")
-})
+    res.redirect("/listings");
+});
 
 // find Route
 
