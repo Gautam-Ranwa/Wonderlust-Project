@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import Listing from "../models/listing.js";
+import isLoggedIn from "../middleware.js"
 
 // index Route
 router.get("/", async (req, res) => {
@@ -12,11 +13,11 @@ router.get("/", async (req, res) => {
 
 //Create Route
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("./listings/new");
 });
 
-router.post("/", async (req, res) => {
+router.post("/", isLoggedIn, async (req, res) => {
     let { title, description, image, price, country, location } = req.body;
 
     let NewListing = new Listing({
@@ -45,7 +46,7 @@ router.get("/:id", async (req, res) => {
 
 // edit Route
 
-router.get("/:id/edit", async (req, res) => {
+router.get("/:id/edit", isLoggedIn, async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     res.render("./listings/edit.ejs", { listing })
@@ -53,7 +54,7 @@ router.get("/:id/edit", async (req, res) => {
 
 // Update Route
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", isLoggedIn, async (req, res) => {
     let { id } = req.params;
 
     let updatedListing = await Listing.findByIdAndUpdate(
@@ -77,7 +78,7 @@ router.put("/:id", async (req, res) => {
 });
 // delete Route
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isLoggedIn, async (req, res) => {
     let { id } = req.params;
     let delListing = await Listing.findByIdAndDelete(id);
     console.log(delListing);
