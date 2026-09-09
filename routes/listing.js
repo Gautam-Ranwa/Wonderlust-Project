@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import Listing from "../models/listing.js";
 import isLoggedIn from "../middleware.js"
+import { isOwner } from "../middleware.js";
 
 // index Route
 router.get("/", async (req, res) => {
@@ -28,6 +29,7 @@ router.post("/", isLoggedIn, async (req, res) => {
         country,
         location
     });
+    NewListing.owner = req.user._id;
 
     await NewListing.save();
 
@@ -35,18 +37,22 @@ router.post("/", isLoggedIn, async (req, res) => {
     res.redirect("/listings");
 });
 
-// find Route
+// show Route
 
 router.get("/:id", async (req, res) => {
     let { id } = req.params;
-    let listing = await Listing.findById(id).populate("reviews");
-    // console.log(listing);
+    let listing = await Listing.findById(id).populate("reviews").populate("owner");
+    if (!listing) {
+        req.flash("error", "listing you requested for does not exist!");
+        res.redirect("/listings");
+    }
+    console.log(listing);
     res.render("./listings/show", { listing })
 });
 
 // edit Route
 
-router.get("/:id/edit", isLoggedIn, async (req, res) => {
+router.get("/:id/edit", isLoggedIn, isOwner, async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     res.render("./listings/edit.ejs", { listing })
@@ -54,7 +60,7 @@ router.get("/:id/edit", isLoggedIn, async (req, res) => {
 
 // Update Route
 
-router.put("/:id", isLoggedIn, async (req, res) => {
+router.put("/:id", isLoggedIn, isOwner, async (req, res) => {
     let { id } = req.params;
 
     let updatedListing = await Listing.findByIdAndUpdate(
@@ -74,11 +80,11 @@ router.put("/:id", isLoggedIn, async (req, res) => {
 
     console.log(updatedListing);
 
-    res.redirect("/listings");
+    res.redirect(`/listings/${id}`);
 });
 // delete Route
 
-router.delete("/:id", isLoggedIn, async (req, res) => {
+router.delete("/:id", isLoggedIn, isOwner, async (req, res) => {
     let { id } = req.params;
     let delListing = await Listing.findByIdAndDelete(id);
     console.log(delListing);
