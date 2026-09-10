@@ -2,8 +2,29 @@
 
 A full-stack travel listing web application built with Node.js, Express.js, MongoDB, and EJS.
 
-## 🚧 Project Status
+## ✨ Features
 
-This project is currently under active development. I am continuously working on it, adding new features, improving the existing functionality, fixing issues, and enhancing the overall user experience.
+* User Registration & Login
+* Authentication using Passport.js
+* Session Management
+* Authorization & Owner Verification
+* Create, Read, Update & Delete Listings
+* Users can edit/delete only their own listings
+* Reviews & Ratings
+* Flash Messages
+* MongoDB & Mongoose
+* Responsive UI with EJS and Bootstrap
 
-The repository will be updated regularly as the project evolves.
+## 🛠️ Tech Stack
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* EJS
+* Bootstrap
+* Passport.js
+
+## 📌 Project Status
+
+Completed core features and currently focusing on project revision, testing, and polishing.
