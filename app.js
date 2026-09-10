@@ -33,7 +33,7 @@ app.use(methodOverride('_method'));
 
 app.engine('ejs', ejsMate);
 
-import ReviewRouter from "./models/review.js";
+// import ReviewRouter from "./models/review.js";
 import listingsRouter from "./routes/listing.js";
 import UserRouter from "./routes/user.js";
 
@@ -91,13 +91,13 @@ app.use((req, res, next) => {
 // })
 
 app.use("/listings", listingsRouter);
-app.use("/listings/:id/reviews", ReviewRouter);
+app.use("/listings/:id/reviews", reviews);
 app.use("/", UserRouter);
 
 
 // app.get("/testListing", async (req, res) => {
 
-//     let sampleListing = new Listing({
+//     let sampleListing = new Listing({    
 //         title: "my new villa",
 //         description: "By the beach",
 //         price: 1200,
